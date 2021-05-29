@@ -1,9 +1,78 @@
-\section{Methods}
-\label{sec:methods}
-\lipsum[8]
+\section{Exact inference}
+\label{sec:exactinference}
+\subsection{Theoretical background}
+\subsubsection{Summing out}
+At this moment, it is very well clear that the basic task for a probabilistic inference system would be, as the word says, performing \textbf{inference}, i.e. computing the posterior probability for a set of query variables, given some observed event in the form of evidence variable. Moreover, it is clear that by \textbf{summing out} the probabilities from the full joint distribution, we are able to compute any conditional probability. More specifically, a query $\mathbf{P}(X \mid \mathbf{e})$ can be always computed as:
+\begin{equation}
+    \mathbf{P}(X \mid \mathbf{e})=\alpha \mathbf{P}(X, \mathbf{e})=\alpha \sum_{\mathbf{y}} \mathbf{P}(X, \mathbf{e}, \mathbf{y})
+\end{equation}
+\subsubsection{Variable elimination}
+A crucial improvement in this algorithm is provided by \textbf{variable elimination}, which we can simplify as a form of \textbf{dynamic programming}, in which the factors get saved into an array to avoid recomputing the same thing multiple times.
+\subsection{Variable elimination with pgmpy}
+As always, \texttt{pgmpy} allows us to do so in a straightforward way:
+\begin{minted}{python}
+from pgmpy.inference import VariableElimination
+exact_inference = VariableElimination(bayesian_model)
+\end{minted}
+Having instantiated the \texttt{exact\_inference} object, we can then call queries on it. For example, a nice question to ask would be:
+\begin{center}
+    \textit{Is maintenance harder for 2-seaters than for family cars?}
+\end{center}
+With just two lines of code, we can produce the probability tables for this query:
+\begin{minted}{python}
+print(exact_inference.query(["Maintenance"],{'People':"2"}))
+print(exact_inference.query(["Maintenance"],{'People':"4"}))
+\end{minted}
+\begin{center}
+\begin{figure}[H]
+\subfloat[Maintenance on 2-seaters]{
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Maintenance level}&\textbf{Probability}\\
+        \hline
+        very high & 0.2975 \\
+        \hline
+        high & 0.2595 \\
+        \hline
+        medium & 0.2215 \\
+        \hline
+        low & 0.2215 \\
+        \hline
+    \end{tabular}
+}
+\subfloat[Maintenance on 4-seaters]{
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Maintenance level}&\textbf{Probability}\\
+        \hline
+        very high & 0.2256 \\
+        \hline
+        high & 0.2450 \\
+        \hline
+        medium & 0.2646 \\
+        \hline
+        low & 0.2648 \\
+        \hline
+    \end{tabular}
+}
+\end{figure}
+\end{center}
+It looks like sport cars are not the best kind of choice if you want to stay cheap on oil and filters.
+\begin{center}
+    \textit{Are cars with high maintenance safe?}
+    \end{center}
+\begin{center}
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Safety}&\textbf{Probability}\\
+        \hline
+        high & 0.2793 \\
+        \hline
+        medium & 0.3240 \\
+        \hline
+        low & 0.3967 \\
+        \hline
+    \end{tabular}
+    \end{center}
 
-\subsection{Subsection}
-\lipsum[8]
-
-\subsection{Subsection}
-\lipsum[8]
+It looks like they are not!
