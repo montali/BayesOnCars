@@ -26,7 +26,12 @@ After some instants, the search finds its best guess of model. We can therefore 
 \texttt{[('Buying', 'Maintenance'), ('Safety', 'People'), ('Safety', 'LugBoot'), ('Acceptability', 'Safety'), ('Acceptability', 'People'), ('Acceptability', 'Buying'), ('Acceptability', 'Maintenance'), ('Acceptability', 'LugBoot')]}
 \end{center}
 which, in a more graphically appealing way, is the following graph:
-%TODO: add graph!!
+\begin{figure}[ht]
+    \centering\includegraphics[width=0.8\linewidth]{figures/DAG.png}
+    \caption{Bayesian network for the cars dataset}
+    \label{fig:errors}
+\end{figure}
+
 \subsection{Parameter learning}
 Now that we've found a good structure for our graph, we'll have to find the values of the Conditional Probability Distributions. The library \texttt{pgmpy} is a great tool for this task too. If one would have to find a solution for this problem, it would be pretty natural to think about the \textbf{relative frequencies} of the variable states. This approach is, basically, what \textit{Maximum Likelihood Estimation} does: as seen in section 17.1 of \cite{book:probgraphmod}, the likelihood function for a given choice of parameters $\theta$ is the probability the model assigns the training data:
 \begin{equation}
